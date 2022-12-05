@@ -75,7 +75,10 @@ function CapaDatos(capa, figuras, database, active, clase, name, color) {
   this.color = color;
   this.CargarCapaDatos = CargarCapaDatos;
 }
-var capasDatos = [
+var capasDatosMark = [
+  //new CapaDatos(null,[],null,0,'mapa','Procesos Morfodinámicos','#2ecc71'),
+];
+var capasDatosMap = [
   //new CapaDatos(null,[],null,0,'mapa','Procesos Morfodinámicos','#2ecc71'),
 ];
 function CargarDatos() {
@@ -83,10 +86,10 @@ function CargarDatos() {
     if (snapshot.exists()) {
       semestres = snapshot.val();
       for (let i = 0; i < semestres["count"]; i++) {
-        capasDatos.push(new CapaDatos(null,[],null,0,'marcadores', semestres["semestre_"+i] ,'#2ecc71'));
+        capasDatosMark.push(new CapaDatos(null,[],null,0,'marcadores', semestres["semestre_"+i] ,'#2ecc71'));
       }
       for (let i = 1; i < semestres["count"]; i++) {
-        var indexMap = capasDatos.push(new CapaDatos(null,[],null,0,'geomapas', semestres["semestre_"+i] ,'#2ecc71'));
+        var indexMap = capasDatosMap.push(new CapaDatos(null,[],null,0,'geomapas', semestres["semestre_"+i] ,'#2ecc71'));
         indexMap = indexMap - 1;
         $("#lista_capas_descargar").empty();
         $("#lista_capas_descargar").append(
@@ -100,32 +103,36 @@ function CargarDatos() {
               '<a class="btn-descargar" id="clasea_descarga_'+ indexMap +'" onclick="DescargarDatos(id, this)" type="button" >  <i class="fas fa-file-download"></i>   Descargar </a>'
         );
       }
-      for (let i = 0; i < capasDatos.length; i++) {
-        if(capasDatos[i].clase === 'marcadores'){
+      for (let i = 0; i < capasDatosMark.length; i++) {
+        ultimoSemestre = capasDatosMark.length - 1;
+
+        if (i == ultimoSemestre || univel === 3) {
           $("#list_mark").append(
             '<li class="content-list first">'+
                 '<label class="switch">'+
-                    '<input type="checkbox" id="forma_' + i + '" onChange="toggleDatos(id)">'+
+                    '<input type="checkbox" id="forma_' + i + '" onChange="toggleDatosMark(id)">'+
                     '<span class="slider round"></span>'+
                 '</label>'+
-                '<a>  ' + capasDatos[i].name + '</a>'+
+                '<a>  ' + capasDatosMark[i].name + '</a>'+
             '</li>'
           );
           $("#forma_"+i).prop("checked", false);
-        }else if(capasDatos[i].clase === 'geomapas'){
+        }        
+      }
+      for (let i = 0; i < capasDatosMap.length; i++) {
+        ultimoSemestre = capasDatosMap.length - 1;
+        if (i == ultimoSemestre || univel === 3) {
           $("#list_aflora").append(
             '<li class="content-list first">'+
                 '<label class="switch">'+
-                    '<input type="checkbox" id="forma_' + i + '" onChange="toggleDatos(id)">'+
+                    '<input type="checkbox" id="forma_' + i + '" onChange="toggleDatosMap(id)">'+
                     '<span class="slider round"></span>'+
                 '</label>'+
-                '<a>  ' + capasDatos[i].name + '</a>'+
+                '<a>  ' + capasDatosMap[i].name + '</a>'+
             '</li>'
           );
           $("#forma_"+i).prop("checked", false);
-        }
-      
-        
+        }        
       }
   
     } else {
@@ -135,18 +142,33 @@ function CargarDatos() {
     console.error(error);
   });
 }
-function toggleDatos(id) {
+function toggleDatosMark(id) {
   var num = id.split("_")[1];
-  console.log(capasDatos[num].active)
-  if (capasDatos[num].active == 0) {
-    capasDatos[num].active = 2;
-    capasDatos[num].CargarCapaDatos();
-  } else if (capasDatos[num].active == 1){
-    capasDatos[num].active = 2;
-    capasDatos[num].capa.addTo(map);
-  } else if (capasDatos[num].active == 2){
-    capasDatos[num].active = 1;
-    map.removeLayer(capasDatos[num].capa);
+  console.log(capasDatosMark[num].active)
+  if (capasDatosMark[num].active == 0) {
+    capasDatosMark[num].active = 2;
+    capasDatosMark[num].CargarCapaDatos();
+  } else if (capasDatosMark[num].active == 1){
+    capasDatosMark[num].active = 2;
+    capasDatosMark[num].capa.addTo(map);
+  } else if (capasDatosMark[num].active == 2){
+    capasDatosMark[num].active = 1;
+    map.removeLayer(capasDatosMark[num].capa);
+  }
+
+}
+function toggleDatosMap(id) {
+  var num = id.split("_")[1];
+  console.log(capasDatosMap[num].active)
+  if (capasDatosMap[num].active == 0) {
+    capasDatosMap[num].active = 2;
+    capasDatosMap[num].CargarCapaDatos();
+  } else if (capasDatosMap[num].active == 1){
+    capasDatosMap[num].active = 2;
+    capasDatosMap[num].capa.addTo(map);
+  } else if (capasDatosMap[num].active == 2){
+    capasDatosMap[num].active = 1;
+    map.removeLayer(capasDatosMap[num].capa);
   }
 
 }
@@ -241,23 +263,23 @@ function CargarCapaDatos() {
 // Función para cargar los datos desde Descargar Datos y dejarlos almacenados
 function CargarDatosDescarga(id, obj){
   const num_descarga = id.split("_")[2];
-  if (capasDatos[num_descarga].active == 0) {
-    capasDatos[num_descarga].active = 2;
-    capasDatos[num_descarga].CargarCapaDatos();
+  if (capasDatosMap[num_descarga].active == 0) {
+    capasDatosMap[num_descarga].active = 2;
+    capasDatosMap[num_descarga].CargarCapaDatos();
     $("#forma_"+num_descarga).prop("checked", true);
-  } else if (capasDatos[num_descarga].active == 1) {
-    capasDatos[num_descarga].active = 2;
-    capasDatos[num_descarga].capa.addTo(map);
+  } else if (capasDatosMap[num_descarga].active == 1) {
+    capasDatosMap[num_descarga].active = 2;
+    capasDatosMap[num_descarga].capa.addTo(map);
     $("#forma_"+num_descarga).prop("checked", true);
   }
 }
 function DescargarDatos(id, obj) {
   const num_descarga = id.split("_")[2];
-  if (capasDatos[num_descarga].active == 0) {
+  if (capasDatosMap[num_descarga].active == 0) {
     alert("Por favor active la capa que desea descargar.")
   } else{
     let filtrotipo = $("#tipo_descarga_" + num_descarga).val();
-    DescargarDatosJSON(capasDatos[num_descarga].database, capasDatos[num_descarga].clase, filtrotipo )
+    DescargarDatosJSON(capasDatosMap[num_descarga].database, capasDatosMap[num_descarga].clase, filtrotipo )
   }
 }
 // Función para descargar un archivo
@@ -832,7 +854,7 @@ $(document).ready(function () {
 
   //------> Cargando los Datos, Municipio,Insumos y Mapas del Área de Estudio
   // Cargando los Botones de los Datos del Visor
-  CargarDatos();
+  
   // Cargando Insumos
   CargarInsumos();
   // Cargando Mapas

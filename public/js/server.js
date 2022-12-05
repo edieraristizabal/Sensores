@@ -72,10 +72,11 @@ var uiConfig = {
                 photo : photoURL,
                 uid : uid,
                 nivel : 1,
-                semestre : "2022-1"
+                semestre : "2022-2"
               });
             }else{
               univel = snapshot.val().nivel;
+              CargarDatos();
             } 
           }).catch((error) => {
             console.error(error);
@@ -90,7 +91,7 @@ var uiConfig = {
           $("#foto-perfil").attr("src", photoURL);
           $("#nombre-perfil").html(displayName);
           $("#correo-perfil").html(email);
-          $("#semestre-perfil").html("Semestre 2022-1");
+          $("#semestre-perfil").html("Semestre 2022-2");
 
         });
       } else {
