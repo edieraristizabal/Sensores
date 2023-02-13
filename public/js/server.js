@@ -41,6 +41,7 @@ var uiConfig = {
   ui.start('#firebaseui-auth-container', uiConfig);
 
   initApp = function() {
+    
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         // User is signed in.
@@ -51,6 +52,7 @@ var uiConfig = {
         uid = user.uid;
         var phoneNumber = user.phoneNumber;
         var providerData = user.providerData;
+        var semestre = "";
         user.getIdToken().then(function(accessToken) {
 
           var jsonProfile = JSON.stringify({
@@ -66,33 +68,54 @@ var uiConfig = {
           
           database.ref().child("users/user_"+uid).get().then((snapshot) => {
             if (!snapshot.exists()) {
-              database.ref('users/user_' + uid).set({
-                name : displayName,
-                email : email,
-                photo : photoURL,
-                uid : uid,
-                nivel : 1,
-                semestre : "2022-2"
+              database.ref().child("semestres").get().then((snapshot1) => {
+                if (snapshot1.exists()) {
+                  // console.log(snapshot.val());
+                  var semestres = snapshot1.val();
+                  var auxNum = semestres["count"] - 1;
+                  semestre = semestres["semestre_"+auxNum];
+                  database.ref('users/user_' + uid).set({
+                    name : displayName,
+                    email : email,
+                    photo : photoURL,
+                    uid : uid,
+                    nivel : 1,
+                    semestre : semestre
+                  });
+                  univel = 1;
+                  $("#firebaseui-auth-container").addClass("d-none");
+                  $("#cancel").addClass("d-none");
+                  $("#modal-perfil-container").removeClass("d-none");
+                  $("#loginModalLabel").text("Bienvenido");
+                  $("#user-photo").attr("src", photoURL);
+                  $("#foto-perfil").attr("src", photoURL);
+                  $("#nombre-perfil").html(displayName);
+                  $("#correo-perfil").html(email);
+                  $("#semestre-perfil").html("Semestre "+semestre);
+                  CargarDatos();
+                }
+              }).catch((error) => {
+                console.error(error);
               });
             }else{
+              // console.log(snapshot.val());
+              
               univel = snapshot.val().nivel;
+              semestre = snapshot.val().semestre;
+              $("#firebaseui-auth-container").addClass("d-none");
+              $("#cancel").addClass("d-none");
+              $("#modal-perfil-container").removeClass("d-none");
+              $("#loginModalLabel").text("Bienvenido");
+              $("#user-photo").attr("src", photoURL);
+              $("#foto-perfil").attr("src", photoURL);
+              $("#nombre-perfil").html(displayName);
+              $("#correo-perfil").html(email);
+              $("#semestre-perfil").html("Semestre "+semestre);
               CargarDatos();
             } 
           }).catch((error) => {
             console.error(error);
           });
-
-
-          $("#firebaseui-auth-container").addClass("d-none");
-          $("#cancel").addClass("d-none");
-          $("#modal-perfil-container").removeClass("d-none");
-          $("#loginModalLabel").text("Bienvenido");
-          $("#user-photo").attr("src", photoURL);
-          $("#foto-perfil").attr("src", photoURL);
-          $("#nombre-perfil").html(displayName);
-          $("#correo-perfil").html(email);
-          $("#semestre-perfil").html("Semestre 2022-2");
-
         });
       } else {
         $("#firebaseui-auth-container").removeClass("d-none");

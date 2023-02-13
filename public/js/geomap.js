@@ -83,61 +83,77 @@ var capasDatosMap = [
 ];
 function CargarDatos() {
   database.ref().child("semestres").get().then((snapshot) => {
-    if (snapshot.exists()) {
-      semestres = snapshot.val();
-      for (let i = 0; i < semestres["count"]; i++) {
-        capasDatosMark.push(new CapaDatos(null,[],null,0,'marcadores', semestres["semestre_"+i] ,'#2ecc71'));
-      }
-      for (let i = 1; i < semestres["count"]; i++) {
-        var indexMap = capasDatosMap.push(new CapaDatos(null,[],null,0,'geomapas', semestres["semestre_"+i] ,'#2ecc71'));
-        indexMap = indexMap - 1;
-        $("#lista_capas_descargar").empty();
-        $("#lista_capas_descargar").append(
-              '<h3>Mapa Geológico</h3>' +
-              '<label for="tipo_descarga_'+ indexMap +'">Descargar en Formato: </label>' +
-              '<select id="tipo_descarga_'+ indexMap +'" class="form-control select-mpios">' +
-                  '<option value="shp">Shapefile</option>' +
-                  '<option value="geojson">GeoJSON</option>' +
-              '</select>'+
-              '<a class="btn-descargar" id="clase_descarga_'+ indexMap +'" onclick="CargarDatosDescarga(id, this)" type="button" >  <i class="fas fa-layer-group"></i>   Cargar la Capa </a>'+
-              '<a class="btn-descargar" id="clasea_descarga_'+ indexMap +'" onclick="DescargarDatos(id, this)" type="button" >  <i class="fas fa-file-download"></i>   Descargar </a>'
-        );
-      }
-      for (let i = 0; i < capasDatosMark.length; i++) {
-        ultimoSemestre = capasDatosMark.length - 1;
-
-        if (i == ultimoSemestre || univel === 3) {
-          $("#list_mark").append(
-            '<li class="content-list first">'+
-                '<label class="switch">'+
-                    '<input type="checkbox" id="forma_' + i + '" onChange="toggleDatosMark(id)">'+
-                    '<span class="slider round"></span>'+
-                '</label>'+
-                '<a>  ' + capasDatosMark[i].name + '</a>'+
-            '</li>'
+    database.ref().child("users/user_"+uid).get().then((snapshot1) => {
+      var univelr = snapshot1.val().nivel;
+      if (snapshot.exists()) {
+        semestres = snapshot.val();
+        for (let i = 0; i < semestres["count"]; i++) {
+          capasDatosMark.push(new CapaDatos(null,[],null,0,'marcadores', semestres["semestre_"+i] ,'#2ecc71'));
+        }
+        for (let i = 1; i < semestres["count"]; i++) {
+          var indexMap = capasDatosMap.push(new CapaDatos(null,[],null,0,'geomapas', semestres["semestre_"+i] ,'#2ecc71'));
+          indexMap = indexMap - 1;
+          $("#lista_capas_descargar").empty();
+          $("#lista_capas_descargar").append(
+                '<h3>Mapa Geológico</h3>' +
+                '<label for="tipo_descarga_'+ indexMap +'">Descargar en Formato: </label>' +
+                '<select id="tipo_descarga_'+ indexMap +'" class="form-control select-mpios">' +
+                    '<option value="shp">Shapefile</option>' +
+                    '<option value="geojson">GeoJSON</option>' +
+                '</select>'+
+                '<a class="btn-descargar" id="clase_descarga_'+ indexMap +'" onclick="CargarDatosDescarga(id, this)" type="button" >  <i class="fas fa-layer-group"></i>   Cargar la Capa </a>'+
+                '<a class="btn-descargar" id="clasea_descarga_'+ indexMap +'" onclick="DescargarDatos(id, this)" type="button" >  <i class="fas fa-file-download"></i>   Descargar </a>'
           );
-          $("#forma_"+i).prop("checked", false);
-        }        
-      }
-      for (let i = 0; i < capasDatosMap.length; i++) {
-        ultimoSemestre = capasDatosMap.length - 1;
-        if (i == ultimoSemestre || univel === 3) {
-          $("#list_aflora").append(
-            '<li class="content-list first">'+
-                '<label class="switch">'+
-                    '<input type="checkbox" id="forma_' + i + '" onChange="toggleDatosMap(id)">'+
-                    '<span class="slider round"></span>'+
-                '</label>'+
-                '<a>  ' + capasDatosMap[i].name + '</a>'+
-            '</li>'
-          );
-          $("#forma_"+i).prop("checked", false);
-        }        
-      }
+        }
+        for (let i = 0; i < capasDatosMark.length; i++) {
+          ultimoSemestre = capasDatosMark.length - 1;
   
-    } else {
-      console.log("No data available");
+          if (i == ultimoSemestre || univelr >= 3) {
+            $("#list_mark").append(
+              '<li class="content-list first">'+
+                  '<label class="switch">'+
+                      '<input type="checkbox" id="forma_' + i + '" onChange="toggleDatosMark(id)">'+
+                      '<span class="slider round"></span>'+
+                  '</label>'+
+                  '<a>  ' + capasDatosMark[i].name + '</a>'+
+              '</li>'
+            );
+            $("#forma_"+i).prop("checked", false);
+          }        
+        }
+        for (let i = 0; i < capasDatosMap.length; i++) {
+          ultimoSemestre = capasDatosMap.length - 1;
+          if (i == ultimoSemestre || univelr >= 4) {
+            $("#list_aflora").append(
+              '<li class="content-list first">'+
+                  '<label class="switch">'+
+                      '<input type="checkbox" id="forma_' + i + '" onChange="toggleDatosMap(id)">'+
+                      '<span class="slider round"></span>'+
+                  '</label>'+
+                  '<a>  ' + capasDatosMap[i].name + '</a>'+
+              '</li>'
+            );
+            $("#forma_"+i).prop("checked", false);
+          }        
+        }
+    
+      } else {
+        console.log("No data available");
+      }
+        
+    }).catch((error) => {
+      console.error(error);
+    });
+  }).catch((error) => {
+    console.error(error);
+  });
+  
+  database.ref().child("users/user_"+uid).get().then((snapshot) => {
+    var univelr = snapshot.val().nivel;
+    if (univelr == 5) {
+      $("#navbar_menu").append('<a href="admin.html" id="btn_admin" class="btn btn-default">Administrar</a>');
     }
+
   }).catch((error) => {
     console.error(error);
   });
@@ -2492,11 +2508,3 @@ function GenerarLinestring() {
   console.log(newproces.toGeoJSON());
   console.log(base_clase);
 }
-
-
-
-
-
-
-
-

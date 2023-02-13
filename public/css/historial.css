@@ -25,8 +25,9 @@
   
   .contenido-pagina{
     position: absolute;
-    top: -90px;
+    top: 60px;
     width: 100%;
+    text-align: center;
     z-index: -1;
   }
   
@@ -235,6 +236,49 @@
   
   .main .elements .lineamenu a:hover {
     transform: scale(1.2);
+  }
+
+  #user-photo {
+    border-radius: 50%;
+    box-shadow: 4px 6px 6px #111111;
+  }
+  
+  #foto-perfil {
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+
+  .modal-content {
+    background-color: #fff0;
+  }
+  
+  #modal-perfil-container {
+    text-align: center;
+  }
+  
+  .modal-header {
+    background: #666;
+    color: white;
+    border: none;
+  }
+  
+  .close {
+    color: white;
+  }
+  
+  .close:hover {
+    color: white;
+  }
+  
+  .modal-body {
+    background: url(../images/navigationBack.png);
+    color: white;
+  }
+  
+  .modal-footer {
+    background: #666;
+    padding: 8px;
+    border: none;
   }
   
   .footer-banner {
@@ -451,5 +495,46 @@
 .descrigene{
   font-size: 1.4rem;
   text-shadow: none;
+}
+.user-contents{
+  text-align: start;
+  margin: 0 30%;
+}
+.user-content{
+  text-align: start;
+  margin: 0 0 0 30%;
+}
+
+.btn-user{
+  margin-left: 1rem;
+  scale: 0.85;
+}
+.btn-semestre{
+  scale: 0.90;
+}
+
+.lista{
+  margin-left: 1rem;
+}
+
+.btn-link{
+  color: #f9ae00;
+  text-decoration: none;
+}
+.btn-link:hover{
+  text-decoration: none;
+  color: #eee;
+}
+.btn-link:focus{
+  text-decoration: none;
+  color: #eee;
+}
+
+.card-header{
+  background: #666;
+}
+
+.card-body{
+  background-color: #eee;
 }
   
